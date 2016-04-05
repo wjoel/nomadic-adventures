@@ -1,0 +1,75 @@
+{
+  "builders": [
+    {
+      "type": "docker",
+      "image": "zeus.wjoel.com:5000/alpine-java8:3.3",
+      "commit": true,
+      "run_command": [
+        "-d", "-i", "--dns=8.8.8.8",
+        "-t", "{{.Image}}", "/bin/sh"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir -p /opt/bin",
+        "cd /opt",
+        "wget https://releases.hashicorp.com/consul-template/0.14.0/consul-template_0.14.0_linux_amd64.zip -O consul-template.zip",
+        "unzip consul-template.zip",
+        "mv consul-template bin",
+        "wget https://packages.graylog2.org/releases/graylog/graylog-2.0.0-beta.1.tgz -O /opt/graylog.tgz",
+        "tar xfz graylog.tgz"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "docker/graylog.conf.tmpl",
+      "destination": "/etc/graylog.conf.tmpl"
+    },
+    {
+      "type": "file",
+      "source": "docker/elasticsearch.yml.tmpl",
+      "destination": "/etc/elasticsearch.yml.tmpl"
+    },
+    {
+      "type": "file",
+      "source": "docker/run-graylog.sh",
+      "destination": "/usr/bin/run-graylog.sh"
+    },
+    {
+      "type": "file",
+      "source": "docker/restart-graylog.sh",
+      "destination": "/usr/bin/restart-graylog.sh"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "chmod +x /usr/bin/run-graylog.sh"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "chmod +x /usr/bin/restart-graylog.sh"
+      ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "zeus.wjoel.com:5000/alpine-graylog",
+        "tag": "2.0",
+        "force": true
+      },
+      {
+        "type": "docker-dockerfile",
+        "cmd": ["/usr/bin/run-graylog.sh"],
+        "expose": "9000"
+      },
+      "docker-push"
+    ]
+  ]
+}

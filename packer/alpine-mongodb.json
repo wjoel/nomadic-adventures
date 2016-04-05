@@ -1,0 +1,39 @@
+{
+  "builders": [
+    {
+      "type": "docker",
+      "image": "zeus.wjoel.com:5000/gliderlabs-alpine:edge",
+      "commit": true,
+      "run_command": [
+        "-d", "-i", "--dns=8.8.8.8",
+        "-t", "{{.Image}}", "/bin/sh"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "echo 'http://dl-3.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories",
+        "apk-install mongodb",
+        "mkdir -p /data/db"
+      ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "zeus.wjoel.com:5000/alpine-mongodb",
+        "tag": "3.2.4",
+        "force": true
+      },
+      {
+        "type": "docker-dockerfile",
+        "entrypoint": ["/usr/bin/mongod"],
+        "expose": "27017 27018 27019 28017"
+      },
+      "docker-push"
+    ]
+  ]
+}

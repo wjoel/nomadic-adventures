@@ -1,0 +1,41 @@
+{
+  "builders": [
+    {
+      "type": "docker",
+      "image": "zeus.wjoel.com:5000/gliderlabs-alpine:3.3",
+      "commit": true,
+      "run_command": [
+        "-d", "-i", "-t", "{{.Image}}", "/bin/sh"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "apk-install rsyslog",
+        "mkdir /etc/rsyslog.d"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "docker/rsyslog.conf",
+      "destination": "/etc/rsyslog.conf"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "zeus.wjoel.com:5000/alpine-rsyslog",
+        "tag": "8.9",
+        "force": true
+      },
+      {
+        "type": "docker-dockerfile",
+        "entrypoint": ["/usr/sbin/rsyslogd"]
+      },
+      "docker-push"
+    ]
+  ]
+}
