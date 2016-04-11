@@ -1,0 +1,22 @@
+---
+- name: Add Docker signature key
+  apt_key: keyserver=p80.pool.sks-keyservers.net id=58118E89F3A912897C070ADBF76221572C52609D
+
+- name: Install apt-transport-https
+  apt: name=apt-transport-https state=present
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb https://apt.dockerproject.org/repo ubuntu-trusty main
+    update_cache: yes
+    state: present
+
+# used for AUFS union mounts to enable image layering
+- name: Install linux-image-extra
+  apt: name="linux-image-extra-{{ ansible_kernel }}" state=present
+
+- name: Install Docker
+  apt: name="docker-engine={{ docker_version }}" state=present
+
+- name: Start Docker
+  service: name=docker state=started enabled=yes

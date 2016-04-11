@@ -24,7 +24,7 @@
     [
       {
         "type": "docker-tag",
-        "repository": "zeus.wjoel.com:5000/alpine-mongodb",
+        "repository": "zeus.wjoel.com:5000/nomadic-mongodb",
         "tag": "3.2.4",
         "force": true
       },

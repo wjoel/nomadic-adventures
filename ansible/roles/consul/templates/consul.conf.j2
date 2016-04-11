@@ -1,0 +1,8 @@
+description "Consul agent"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+
+exec /opt/bin/consul agent -config-dir="/opt/etc/consul.d"

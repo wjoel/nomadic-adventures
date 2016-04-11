@@ -1,0 +1,20 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.hostname = "nomadclient"
+  config.vm.network "private_network", ip: "192.168.111.111"
+
+  ["vmware_fusion", "vmware_workstation", "virtualbox"].each do |provider|
+    config.vm.provider provider do |v, override|
+      v.memory = "2048"
+      v.cpus = 2
+    end
+  end
+
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "../ansible/nomad-vm.yml"
+    ansible.host_vars = {
+      "nomad_is_server" => ENV.has_key?('NOMAD_IS_DEV'),
+      "nomad_client_servers" => [ENV["NOMAD_CLIENT_SERVER_ADDRESS"] || "192.168.111.1"]
+    }
+  end
+end

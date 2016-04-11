@@ -19,7 +19,7 @@
     },
     {
       "type": "file",
-      "source": "docker/rsyslog.conf",
+      "source": "files/rsyslog.conf",
       "destination": "/etc/rsyslog.conf"
     }
   ],
@@ -27,7 +27,7 @@
     [
       {
         "type": "docker-tag",
-        "repository": "zeus.wjoel.com:5000/alpine-rsyslog",
+        "repository": "zeus.wjoel.com:5000/nomadic-rsyslog",
         "tag": "8.9",
         "force": true
       },

@@ -1,0 +1,47 @@
+is_master = true
+node_id_file = /etc/graylog/server/node-id
+password_secret = vYCbFKEWaE3GU9I75jSAefTrQJmdi6nt4AeCz3ux1AxLm5bVaH7CkJ11yIH9Jd02yA7rlfc3eX67a4ct8DxGp8Sz74L8thG5
+root_password_sha2 = 426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363
+plugin_dir = /opt/graylog-2.0.0-beta.1/plugin
+rest_listen_uri = http://0.0.0.0:12900/
+rest_transport_uri = http://{{range $i, $e := service "graylog-rest"}}{{if eq $i 0}}{{$e.Address}}:{{$e.Port}}{{end}}{{end}}/
+web_listen_uri = http://0.0.0.0:9000/
+rotation_strategy = count
+elasticsearch_config_file = /alloc/elasticsearch.yml
+elasticsearch_max_docs_per_index = 20000000
+elasticsearch_max_number_of_indices = 20
+retention_strategy = delete
+elasticsearch_shards = 4
+elasticsearch_replicas = 0
+elasticsearch_index_prefix = graylog
+allow_leading_wildcard_searches = false
+allow_highlighting = true
+elasticsearch_cluster_name = graylog_cluster
+# use a different port if you run multiple Elasticsearch nodes on one machine
+#elasticsearch_transport_tcp_port = 9350
+# we don't need to run the embedded HTTP server here
+#elasticsearch_http_enabled = false
+elasticsearch_discovery_zen_ping_multicast_enabled = false
+elasticsearch_discovery_zen_ping_unicast_hosts = {{range $i, $e := service "elasticsearch-cluster"}}{{if ne $i 0}},{{end}}{{$e.Address}}:{{$e.Port}}{{end}}
+elasticsearch_analyzer = standard
+output_batch_size = 500
+output_flush_interval = 1
+output_fault_count_threshold = 5
+output_fault_penalty_seconds = 30
+processbuffer_processors = 5
+outputbuffer_processors = 3
+processor_wait_strategy = blocking
+ring_size = 65536
+inputbuffer_ring_size = 65536
+inputbuffer_processors = 2
+inputbuffer_wait_strategy = blocking
+message_journal_enabled = true
+message_journal_dir = /opt/graylog-2.0.0-beta.1/data/journal
+lb_recognition_period_seconds = 3
+mongodb_uri = mongodb://{{range $i, $e := service "mongod"}}{{if ne $i 0}},{{end}}{{$e.Address}}:{{$e.Port}}{{end}}/graylog
+# Use a replica set instead of a single host
+#mongodb_uri = mongodb://grayloguser:secret@localhost:27017,localhost:27018,localhost:27019/graylog
+mongodb_max_connections = 100
+mongodb_threads_allowed_to_block_multiplier = 5
+content_packs_dir = /opt/graylog-2.0.0-beta.1/data/contentpacks
+content_packs_auto_load = grok-patterns.json

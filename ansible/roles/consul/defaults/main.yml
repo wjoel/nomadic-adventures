@@ -1,0 +1,11 @@
+---
+consul_version: 0.6.4
+consul_password: "{{ consul_password_secret }}"
+consul_is_server: no
+consul_datacenter: dc1
+consul_data_dir: /var/consul
+consul_start_join_servers: null
+consul_ui_dir: /var/consul/ui
+consul_advertise_addr: "{{ ansible_default_ipv4.address }}"
+consul_leave_on_terminate: false
+

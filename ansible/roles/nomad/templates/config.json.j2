@@ -1,0 +1,53 @@
+{
+  "region": "{{ nomad_region }}",
+  "enable_syslog": true,
+  "leave_on_terminate": true,
+{% if nomad_name is defined %}
+  "name": {{ nomad_name|to_json }},
+{% endif %}
+{% if nomad_is_server|default(False) %}
+  "server": {
+    "enabled": true,
+    "bootstrap_expect": {{ nomad_servers|count }},
+    "data_dir": "{{ nomad_data_dir }}"
+  },
+{% endif %}
+{% if nomad_is_client %}
+  "client": {
+{% if nomad_client_servers is defined %}
+    "servers": {{ nomad_client_servers|to_json }},
+{%  endif %}
+    "options": {
+{% if nomad_client_consul_address is defined %}
+      "consul.address": {{ nomad_client_consul_address|to_json }},
+{% endif %}
+    },
+{% if nomad_client_network_interface is defined %}
+    "network_interface": {{ nomad_client_network_interface|to_json }},
+{% endif %}
+{% if nomad_network_speed is defined %}
+    "network_speed": {{ nomad_network_speed }},
+{% endif %}
+{% if nomad_client_options is defined %}
+    "options": {{ nomad_client_options|to_json }},
+{% endif %}
+{% if nomad_client_options is defined %}
+    "node_id": {{ nomad_client_id }},
+{% endif %}
+{% if nomad_reserved is defined %}
+    "reserved": {{ nomad_reserved|to_json }},
+{% endif %}
+    "enabled": true
+  },
+{% endif %}
+{% if nomad_bind_addr is defined %}
+  "bind_addr": {{ nomad_bind_addr|to_json }},
+{% endif %}
+{% if nomad_addresses is defined %}
+  "addresses": {{ nomad_addresses|to_json }},
+{% endif %}
+{% if nomad_advertise is defined %}
+  "advertise": {{ nomad_advertise|to_json }},
+{% endif %}
+  "datacenter": "{{ nomad_datacenter }}"
+}

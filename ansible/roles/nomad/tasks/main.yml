@@ -1,0 +1,40 @@
+---
+- name: Download Nomad
+  get_url:
+    url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_amd64.zip"
+    dest: /opt/nomad.zip
+
+- name: Create required directories /opt/bin
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /opt/bin
+    - /opt/etc
+    - /opt/etc/nomad.d
+    - "{{ nomad_data_dir }}"
+
+- name: Install unzip
+  apt: name=unzip state=present
+
+- name: Unpack Nomad
+  unarchive:
+    src: /opt/nomad.zip
+    dest: /opt/bin/
+    creates: /opt/bin/nomad
+    copy: no
+
+- name: Create Nomad config
+  template:
+    src: config.json.j2
+    dest: /opt/etc/nomad.d/config.json
+  notify: Restart Nomad
+
+- name: Create Nomad upstart script
+  template:
+    src: nomad.conf.j2
+    dest: /etc/init/nomad.conf
+
+- name: Start Nomad
+  service: name=nomad state=started enabled=yes

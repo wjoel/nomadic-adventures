@@ -1,0 +1,10 @@
+---
+nomad_version: 0.3.1
+nomad_bind_addr: "{{ ansible_default_ipv4.address }}"
+nomad_rpc_host: "{{ ansible_default_ipv4.address }}"
+nomad_rpc_port: 4647
+nomad_region: eu
+nomad_datacenter: dc1
+nomad_data_dir: /var/lib/nomad
+nomad_is_server: False
+nomad_is_client: True

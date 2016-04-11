@@ -1,0 +1,37 @@
+{
+{% if consul_is_server and not consul_is_bootstrap|default(False) %}
+  "bootstrap_expect": {{ consul_servers|count }},
+{% endif %}
+{% if consul_is_bootstrap and consul_is_bootstrap|default(False) %}
+  "bootstrap": true,
+{% endif %}
+{% if consul_node_name is defined %}
+  "node_name": {{ consul_node_name|to_json }},
+{% endif %}
+  "server": {{ consul_is_server|to_json }},
+  "datacenter": "{{ consul_datacenter }}",
+  "data_dir": "{{ consul_data_dir }}",
+  "encrypt": "{{ consul_password }}",
+  "log_level": "INFO",
+  "enable_syslog": true,
+  "leave_on_terminate": {{ consul_leave_on_terminate|to_json }},
+  "disable_remote_exec": true,
+  "rejoin_after_leave": true,
+{% if consul_join is defined and consul_join %}
+  "start_join": {{ consul_join|to_json }},
+  "retry_join": {{ consul_join|to_json }},
+{% endif %}
+{% if consul_ui_wanted is defined %}
+  "ui_dir": "{{ consul_ui_dir }}",
+{% endif %}
+{% if consul_bind_addr is defined %}
+  "bind_addr": {{ consul_bind_addr|to_json }},
+{% endif %}
+{% if consul_addresses is defined %}
+  "addresses": {{ consul_addresses|to_json }},
+{% endif %}
+{% if consul_client_addr is defined %}
+  "client_addr": {{ consul_client_addr|to_json }},
+{% endif %}
+  "advertise_addr": "{{ consul_advertise_addr }}"
+}

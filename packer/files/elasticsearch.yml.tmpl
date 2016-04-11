@@ -1,0 +1,10 @@
+cluster.name: graylog_cluster
+node.name: "graylog-server"
+node.master: false
+node.data: false
+network.host: _non_loopback:ipv4_
+http.enabled: false
+transport.tcp.port: {{ index (env "NOMAD_ADDR_es_transport" | split ":") 1 }}
+
+transport.publish_host: {{ index (env "NOMAD_ADDR_es_transport" | split ":") 0 }}
+transport.publish_port: {{ index (env "NOMAD_ADDR_es_transport" | split ":") 1 }}

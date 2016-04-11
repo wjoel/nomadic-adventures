@@ -1,0 +1,92 @@
+---
+- name: Create Consul group
+  group:
+    name: consul
+    system: yes
+
+- name: Create Consul user
+  user:
+    name: consul
+    system: yes
+    group: consul
+
+- name: Create consul directories
+  file:
+    path: "{{ item }}"
+    owner: consul
+    group: consul
+    state: directory
+    mode: 0755
+  with_items:
+    - /opt/etc/consul.d
+    - "{{ consul_data_dir }}"
+    - "{{ consul_ui_dir }}"
+    - /var/consul
+
+- name: Check if Consul has been installed
+  stat: path=/opt/bin/consul
+  register: consul_installed
+
+- name: Check if Consul UI has been installed
+  stat: path="{{ consul_ui_dir }}/index.html"
+  register: consul_ui_installed
+
+- name: Download Consul binary
+  when: consul_installed.stat.islnk is not defined
+  get_url:
+    url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
+    dest: /opt/consul.zip
+  register: consul_downloaded
+
+- name: Download Consul UI
+  get_url:
+    url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_web_ui.zip"
+    dest: /var/consul/consul-ui.zip
+  register: consul_ui_downloaded
+  when: (consul_ui_installed.stat.islnk is not defined and consul_ui_wanted|default(False))
+
+- name: Create /opt/bin
+  file:
+    path: /opt/bin
+    state: directory
+    mode: 0755
+
+- name: Install unzip
+  apt: name=unzip state=present
+
+- name: Unpack Consul
+  when: consul_installed.stat.islnk is not defined
+  unarchive:
+    src: /opt/consul.zip
+    dest: /opt/bin/
+    creates: /opt/bin/consul
+    copy: no
+    owner: consul
+    group: consul
+
+- name: Unpack Consul UI
+  unarchive:
+    src: /var/consul/consul-ui.zip
+    dest: "{{ consul_ui_dir }}/"
+    creates: "{{ consul_ui_dir }}/index.html"
+    copy: no
+    owner: consul
+    group: consul
+  when: "{{ consul_ui_installed.stat.islnk is not defined }} and {{ consul_ui_wanted|default(False) }}"
+
+- name: Create Consul config
+  template:
+    src: config.json.j2
+    dest: /opt/etc/consul.d/config.json
+    owner: consul
+    group: consul
+  register: consul_configured
+  notify: Restart Consul
+
+- name: Create Consul upstart script
+  template:
+    src: consul.conf.j2
+    dest: /etc/init/consul.conf
+
+- name: Start Consul
+  service: name=consul state=started enabled=yes

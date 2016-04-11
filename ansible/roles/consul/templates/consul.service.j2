@@ -1,0 +1,19 @@
+[Unit]
+Description=Consul
+Requires=network.target
+After=network.target
+ConditionPathExists=/opt/etc/consul/config.json
+
+[Service]
+Type=simple
+PIDFile=/var/run/consul.pid
+User=consul
+Group=consul
+WorkingDirectory={{ consul_data_dir }}
+ExecStart=/opt/bin/consul agent -config-dir /opt/etc/consul -data-dir {{ consul_data_dir }}
+Restart=always
+RestartSec=1min
+SyslogIdentifier=consul
+
+[Install]
+WantedBy=multi-user.target

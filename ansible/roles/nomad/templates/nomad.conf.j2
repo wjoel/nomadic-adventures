@@ -1,0 +1,10 @@
+description "Nomad agent"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+
+exec /opt/bin/nomad agent \
+  -config="/opt/etc/nomad.d" \
+  -data-dir="{{ nomad_data_dir }}"

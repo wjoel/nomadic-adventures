@@ -25,22 +25,22 @@
     },
     {
       "type": "file",
-      "source": "docker/graylog.conf.tmpl",
+      "source": "files/graylog.conf.tmpl",
       "destination": "/etc/graylog.conf.tmpl"
     },
     {
       "type": "file",
-      "source": "docker/elasticsearch.yml.tmpl",
+      "source": "files/elasticsearch.yml.tmpl",
       "destination": "/etc/elasticsearch.yml.tmpl"
     },
     {
       "type": "file",
-      "source": "docker/run-graylog.sh",
+      "source": "files/run-graylog.sh",
       "destination": "/usr/bin/run-graylog.sh"
     },
     {
       "type": "file",
-      "source": "docker/restart-graylog.sh",
+      "source": "files/restart-graylog.sh",
       "destination": "/usr/bin/restart-graylog.sh"
     },
     {
@@ -60,7 +60,7 @@
     [
       {
         "type": "docker-tag",
-        "repository": "zeus.wjoel.com:5000/alpine-graylog",
+        "repository": "zeus.wjoel.com:5000/nomadic-graylog",
         "tag": "2.0",
         "force": true
       },

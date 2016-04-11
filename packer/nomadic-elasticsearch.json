@@ -20,7 +20,7 @@
     },
     {
       "type": "file",
-      "source": "docker/run-elasticsearch.sh",
+      "source": "files/run-elasticsearch.sh",
       "destination": "/usr/bin/run-elasticsearch.sh"
     },
     {
@@ -41,7 +41,7 @@
     [
       {
         "type": "docker-tag",
-        "repository": "zeus.wjoel.com:5000/alpine-elasticsearch",
+        "repository": "zeus.wjoel.com:5000/nomadic-elasticsearch",
         "tag": "2.2.1",
         "force": true
       },

@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: yes
+
+  roles:
+  - role: consul
+    consul_node_name: nomad-vm
+    consul_servers: [192.168.111.1]
+    consul_is_server: True
+    consul_is_bootstrap: True
+    consul_password_secret: BuYWttVqtFOu4QbXDNdhjw==
+    consul_bind_addr: 192.168.111.111
+    consul_advertise_addr: 192.168.111.111
+    consul_addresses:
+      dns: 192.168.111.111
+      http: 192.168.111.111
+      https: 192.168.111.111
+      rpc: 192.168.111.111
+  - role: docker
+    docker_version: "1.9.1-0~trusty"
+  - role: nomad
+    nomad_name: nomad-vm
+    nomad_cpu: 2000
+    nomad_memory: 1792
+    nomad_network_speed: 1000
+    nomad_bind_addr: 192.168.111.111
+    nomad_client_servers: ["192.168.111.1"]
+    nomad_client_consul_address: "192.168.111.111:8500"
+    nomad_client_network_interface: eth1
+    nomad_addresses:
+      http: 192.168.111.111
+      rpc: 192.168.111.111
+      serf: 192.168.111.111
+    nomad_advertise:
+      rpc: "192.168.111.111:4647"
+      serf: "192.168.111.111:4648"

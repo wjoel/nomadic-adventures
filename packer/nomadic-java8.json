@@ -2,8 +2,8 @@
   "builders": [
     {
       "type": "docker",
-      "image": "zeus.wjoel.com:5000/gliderlabs-alpine:edge",
-      "commit": true,
+      "image": "zeus.wjoel.com:5000/gliderlabs-alpine:3.3",
+      "export_path": "image.tar",
       "run_command": [
         "-d", "-i", "--dns=8.8.8.8",
         "-t", "{{.Image}}", "/bin/sh"
@@ -21,10 +21,9 @@
   "post-processors": [
     [
       {
-        "type": "docker-tag",
-        "repository": "zeus.wjoel.com:5000/alpine-java8",
-        "tag": "edge",
-        "force": true
+        "type": "docker-import",
+        "repository": "zeus.wjoel.com:5000/nomadic-java8",
+        "tag": "3.3"
       },
       "docker-push"
     ]

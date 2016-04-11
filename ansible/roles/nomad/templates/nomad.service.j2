@@ -1,0 +1,17 @@
+[Unit]
+Description=Nomad
+Requires=network.target
+After=network.target
+ConditionPathExists=/opt/etc/nomad/config.json
+
+[Service]
+Type=simple
+PIDFile=/var/run/nomad.pid
+WorkingDirectory={{ nomad_data_dir }}
+ExecStart=/opt/bin/nomad agent -config /opt/etc/nomad/config.json -data-dir {{ nomad_data_dir }}
+Restart=always
+RestartSec=1min
+SyslogIdentifier=nomad
+
+[Install]
+WantedBy=multi-user.target
