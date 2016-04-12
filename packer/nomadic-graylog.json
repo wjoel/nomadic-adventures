@@ -20,8 +20,15 @@
         "unzip consul-template.zip",
         "mv consul-template bin",
         "wget https://packages.graylog2.org/releases/graylog/graylog-2.0.0-beta.1.tgz -O /opt/graylog.tgz",
-        "tar xfz graylog.tgz"
+        "tar xfz graylog.tgz",
+        "apk-install supervisor",
+        "mkdir /etc/supervisor.d"
       ]
+    },
+    {
+      "type": "file",
+      "source": "files/graylog-supervisord.ini",
+      "destination": "/etc/supervisor.d/graylog.ini"
     },
     {
       "type": "file",
@@ -40,19 +47,20 @@
     },
     {
       "type": "file",
-      "source": "files/restart-graylog.sh",
-      "destination": "/usr/bin/restart-graylog.sh"
+      "source": "files/run-consul-template.sh",
+      "destination": "/usr/bin/run-consul-template.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/stop-graylog.sh",
+      "destination": "/usr/bin/stop-graylog.sh"
     },
     {
       "type": "shell",
       "inline": [
-        "chmod +x /usr/bin/run-graylog.sh"
-      ]
-    },
-    {
-      "type": "shell",
-      "inline": [
-        "chmod +x /usr/bin/restart-graylog.sh"
+        "chmod +x /usr/bin/run-graylog.sh",
+        "chmod +x /usr/bin/stop-graylog.sh",
+        "chmod +x /usr/bin/run-consul-template.sh"
       ]
     }
   ],
@@ -66,7 +74,7 @@
       },
       {
         "type": "docker-dockerfile",
-        "cmd": ["/usr/bin/run-graylog.sh"],
+        "cmd": ["/usr/bin/supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"],
         "expose": "9000"
       },
       "docker-push"
